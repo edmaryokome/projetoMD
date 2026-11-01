@@ -1,0 +1,296 @@
+% Modelo limpo baseado no IEEEtran (journal).
+
+% Ajuste as secoes e metadados conforme as exigencias do periodico escolhido.
+
+\documentclass[lettersize,journal]{IEEEtran}
+
+
+
+
+% Pacotes essenciais
+
+\usepackage[T1]{fontenc}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage[brazilian]{babel} % teste sem babel
+
+\usepackage{amsmath,amssymb}
+
+\usepackage{graphicx}
+
+\usepackage{array}
+
+\usepackage{cite}
+
+\usepackage{url}
+
+% Ative apenas quando precisar de subfiguras:
+
+% \usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+
+% Ative apenas quando precisar de pseudocodigo:
+
+% \usepackage{algorithm}
+
+% \usepackage{algorithmic}
+
+
+
+
+\renewcommand{\IEEEkeywordsname}{Palavras-chave}
+\renewcommand{\abstractname}{Resumo}
+
+\begin{document}
+
+% Título do artigo
+\title{
+{\fontsize{18}{21}\selectfont
+Análise Experimental Comparativa de Algoritmos de
+Agrupamento: Desempenho Computacional, Qualidade e
+Identificação de Padrões de Consumo de Energia Elétrica}
+}
+% Autores
+
+\author{
+
+Edmar Augusto Yokome,
+
+Verônica Oliveira de Carvalho%
+
+\thanks{
+
+Edmar Augusto Yokome e Verônica Oliveira de Carvalho
+
+são vinculados à Universidade Estadual Paulista
+
+(UNESP), Brasil.
+
+}
+
+}
+
+
+
+
+% Gerar título e autores
+
+\maketitle
+
+\begin{abstract}
+
+Este artigo apresenta um estudo experimental da aplicação dos algoritmos de agrupamento K-Means, DBSCAN e BIRCH à base de dados Individual Household Electric Power Consumption. O objetivo é avaliar o desempenho computacional e a qualidade dos agrupamentos, além de identificar padrões de consumo de energia elétrica. Os registros são organizados em perfis diários, representados por 24 atributos correspondentes às médias horárias de consumo, e distribuídos em subconjuntos de diferentes tamanhos. São investigadas diferentes configurações de parâmetros para cada algoritmo. A qualidade dos agrupamentos é avaliada pelas métricas Silhouette, Davies-Bouldin e Calinski-Harabasz, enquanto o desempenho computacional é analisado pelo tempo de execução. Os agrupamentos são examinados considerando consumo médio, horários de pico e variações ao longo do dia. Os resultados demonstraram que o DBSCAN apresentou os menores tempos médios de execução em todos os cenários, enquanto o BIRCH obteve os maiores valores médios de Silhouette, embora tenha apresentado maior variabilidade entre as execuções. O K-Means destacou-se pela elevada estabilidade dos agrupamentos e pela identificação de dois perfis predominantes de consumo elétrico, diferenciados principalmente pela intensidade da demanda ao longo do dia, com picos de consumo nos períodos matutino e noturno. Conclui-se que os algoritmos apresentam comportamentos distintos quanto ao desempenho computacional, à qualidade e à estabilidade dos agrupamentos, sendo o K-Means o mais adequado, nas condições investigadas, para identificar perfis predominantes de consumo elétrico.
+
+\end{abstract}
+
+\begin{IEEEkeywords}
+
+Agrupamento, mineração de dados, K-Means, DBSCAN, BIRCH, consumo de energia elétrica.
+
+\end{IEEEkeywords}
+
+
+\section{Introducao}
+Mineração de dados consiste na aplicação de técnicas e algoritmos específicos para identificar e extrair padrões em conjuntos de dados. Segundo \cite{Fayyad1996}, essa atividade constitui uma das etapas fundamentais do processo de Descoberta de Conhecimento em Bases de Dados, sendo responsável pela identificação de padrões que, após sua avaliação e interpretação, podem contribuir para a obtenção de conhecimentos relevantes.
+
+Agrupamento é uma das tarefas de mineração de dados, pertencente à categoria de aprendizado não supervisionado. Seu objetivo consiste em organizar um conjunto de dados em grupos, denominados clusters, considerando características de similaridade entre os registros. Segundo \cite{Jain1999}, essa técnica permite identificar estruturas e padrões presentes nos dados sem a necessidade de classes previamente definidas.
+
+Para a realização da tarefa de agrupamento, diferentes algoritmos podem ser empregados, fundamentados em distintas abordagens metodológicas. Entre eles, destacam-se o K-Means, que utiliza uma abordagem particional baseada em centroides; o DBSCAN, que identifica agrupamentos a partir da densidade dos dados; e o BIRCH, que emprega uma abordagem hierárquica baseada em estruturas de sumarização dos dados. Essas diferenças metodológicas influenciam a formação dos agrupamentos e podem impactar tanto a qualidade dos resultados quanto o desempenho computacional dos algoritmos.
+
+A base de dados Individual Household Electric Power Consumption, disponibilizada pela UCI Machine Learning Repository, contém registros de consumo de energia elétrica coletados em uma residência localizada em Sceaux, na França, entre dezembro de 2006 e novembro de 2010. Segundo \cite{Hebrail2006}, o conjunto de dados compreende 2.075.259 registros, obtidos em intervalos de um minuto, contemplando variáveis relacionadas à potência ativa, potência reativa, tensão elétrica, intensidade de corrente e medições individualizadas de consumo energético. Por apresentar características multivariadas e temporais, essa base possibilita a aplicação de diferentes técnicas de mineração de dados, incluindo algoritmos de agrupamento, para a identificação e análise de padrões de consumo de energia elétrica. 
+
+Embora diferentes algoritmos possam ser empregados na tarefa de agrupamento, suas características metodológicas podem produzir resultados distintos quando aplicados a um mesmo conjunto de dados. Essas diferenças tornam relevante investigar como o desempenho computacional, a qualidade e a estabilidade dos agrupamentos variam em função do algoritmo utilizado e do volume de dados analisado. Nesse contexto, surge o questionamento sobre como os algoritmos K-Means, DBSCAN e BIRCH se comportam quando aplicados a diferentes subconjuntos de dados de consumo de energia elétrica e em que medida os agrupamentos produzidos permitem identificar padrões representativos de consumo.
+
+Este trabalho tem como objetivo realizar um estudo experimental comparativo dos algoritmos de agrupamento K-Means, DBSCAN e BIRCH, aplicados à base de dados Individual Household Electric Power Consumption. A investigação busca avaliar o desempenho computacional, a qualidade e a estabilidade dos agrupamentos produzidos pelos algoritmos, considerando diferentes volumes de dados, além de identificar e caracterizar padrões de consumo de energia elétrica.
+
+A realização de uma análise experimental comparativa justifica-se pela necessidade de compreender as diferenças de comportamento entre algoritmos de agrupamento fundamentados em abordagens distintas. A avaliação conjunta do desempenho computacional, da qualidade e da estabilidade dos agrupamentos permite examinar não apenas a eficiência dos algoritmos, mas também a consistência das estruturas identificadas. No contexto do consumo de energia elétrica, essa análise contribui para compreender como diferentes estratégias de agrupamento representam os perfis diários de consumo e quais características podem influenciar a interpretação dos padrões encontrados.
+
+Para alcançar os objetivos propostos, inicialmente foi realizado um estudo dos algoritmos K-Means, DBSCAN e BIRCH, considerando suas características de funcionamento e requisitos computacionais. Em seguida, a base de dados Individual Household Electric Power Consumption foi analisada e submetida a etapas de pré-processamento, incluindo o tratamento de valores ausentes, a seleção de atributos e a organização dos registros em perfis diários de consumo, representados por médias horárias. Os algoritmos foram implementados em Python e aplicados a subconjuntos de diferentes tamanhos, permitindo comparar o desempenho computacional por meio dos tempos de execução e avaliar a qualidade dos agrupamentos utilizando as métricas Silhouette, Davies-Bouldin e Calinski-Harabasz. Adicionalmente, foi analisada a estabilidade das partições produzidas, por meio do índice Adjusted Rand Index (ARI). Por fim, os agrupamentos identificados foram caracterizados e interpretados com base nas diferenças de intensidade do consumo elétrico, nos horários de maior demanda e nas variações observadas ao longo do dia.
+
+As principais contribuições deste trabalho concentram-se na avaliação experimental e na interpretação dos agrupamentos produzidos pelos algoritmos investigados. A pesquisa apresenta uma comparação sistemática do desempenho computacional, da qualidade e da estabilidade dos agrupamentos em diferentes volumes de dados, utilizando múltiplas execuções e métricas de validação. Adicionalmente, realiza uma análise comparativa da qualidade dos agrupamentos sobre um conjunto comum de registros, permitindo examinar os resultados sob condições de avaliação mais uniformes. Por fim, contribui para a caracterização de perfis diários de consumo de energia elétrica, evidenciando diferenças na intensidade da demanda e nos horários de maior consumo.
+
+\label{sec:introducao}
+
+% Contextualizacao, problema de pesquisa, objetivos, contribuicoes e organizacao.
+
+
+
+
+\section{Trabalhos Relacionados}
+\label{sec:relacionados}
+% Pesquisas semelhantes, resultados e lacunas.
+\cite{Rajabi2020} realizaram um estudo comparativo de técnicas de agrupamento aplicadas à segmentação de padrões de consumo elétrico, investigando diferentes algoritmos, parâmetros e estratégias de redução de dimensionalidade. Complementarmente, \cite{Wani2024} apresentou uma revisão de algoritmos de agrupamento, destacando suas limitações e desafios relacionados à escalabilidade e à complexidade computacional.
+
+Em um estudo mais recente, publicado na IEEE Access por \cite{Nascimento2025}, foram aplicados os algoritmos K-Means, Mini-Batch K-Means e BIRCH na análise de dados de consumo elétrico, com o objetivo de identificar padrões e contribuir para a gestão energética. Diferentemente dessas abordagens, o presente trabalho realiza uma avaliação experimental conjunta dos algoritmos K-Means, DBSCAN e BIRCH, considerando desempenho computacional, qualidade, estabilidade dos agrupamentos e interpretação de perfis diários de consumo elétrico.
+
+
+
+
+\section{Materiais e Métodos}
+
+\label{sec:metodologia}
+
+
+\subsection{Base de Dados}
+% Descricao de Individual Household Electric Power Consumption.
+Para a realização deste estudo, foi utilizada a base de dados Individual Household Electric Power Consumption, disponibilizada pela UCI Machine Learning Repository. O conjunto contém 2.075.259 registros de medições elétricas realizadas em uma residência localizada em Sceaux, na França, entre dezembro de 2006 e novembro de 2010, com frequência de amostragem de um minuto.
+
+A base original apresenta variáveis relacionadas à potência ativa global (Global\_active\_power), potência reativa global (Global\_reactive\_power), tensão elétrica (Voltage), intensidade de corrente (Global\_intensity) e medições de consumo associadas a três submedições (Sub\_metering\_1, Sub\_metering\_2 e Sub\_metering\_3), além dos atributos de data e horário.
+
+Para atender aos objetivos da pesquisa, foram selecionados os atributos de data (Date), horário (Time) e potência ativa global (Global\_active\_power). A escolha dessa última variável fundamenta-se na possibilidade de caracterizar a intensidade da demanda elétrica ao longo do dia, permitindo a construção de perfis temporais e a identificação de similaridades entre diferentes dias de consumo.
+
+
+\subsection{Pré-processamento e Representação dos Dados}
+% Preparacao dos dados e agregacao por hora/dia, se aplicavel.
+
+
+
+
+Inicialmente, os registros foram submetidos a procedimentos de preparação, envolvendo a conversão dos atributos para formatos apropriados, a identificação de valores ausentes e a organização temporal das medições. Os atributos de data e horário foram utilizados para estabelecer a correspondência entre as observações e os respectivos períodos de consumo.
+
+Considerando a frequência original de um minuto, os registros foram agregados por dia e por hora, calculando-se a média da potência ativa global em cada intervalo horário. Dessa forma, cada dia passou a ser representado por um vetor de 24 atributos numéricos, correspondentes às médias horárias entre 00h e 23h. Essa representação possibilitou analisar o comportamento diário da demanda elétrica e comparar dias com características semelhantes.
+
+Durante o pré-processamento, foram estabelecidos critérios para avaliar a completude dos registros diários. Admitiu-se, no máximo, uma hora com medições incompletas por dia, desde que essa hora apresentasse ao menos uma leitura válida para o cálculo da média. Os dias que não atenderam ao critério foram excluídos da análise. Ao final desse procedimento, foram selecionados 1.411 dias, correspondentes a aproximadamente 97,85% dos 1.442 dias identificados na base.
+
+O conjunto resultante foi organizado em uma matriz de 1.411 registros e 24 atributos, na qual cada linha representa um dia e cada coluna corresponde à média da potência ativa global em determinado horário. Essa matriz constituiu a entrada utilizada nos experimentos com os algoritmos de agrupamento.
+
+\subsection{Cenários Experimentais}
+Com o objetivo de investigar o comportamento dos algoritmos diante de diferentes volumes de dados, foram definidos quatro cenários experimentais, denominados C1, C2, C3 e C4. Os cenários foram constituídos por subconjuntos progressivos da matriz resultante do pré-processamento, mantendo-se a mesma representação de 24 atributos para todos os registros.
+
+O cenário C1 foi composto por 353 dias, enquanto os cenários C2, C3 e C4 compreenderam, respectivamente, 706, 1.058 e 1.411 dias. Essa organização permitiu examinar as variações no tempo de execução, na qualidade e na estabilidade dos agrupamentos à medida que o número de registros aumentava.
+
+Os três algoritmos foram aplicados aos quatro cenários, utilizando-se a mesma base de entrada em cada condição experimental. Para examinar a consistência dos resultados, foram realizadas 30 execuções por algoritmo e por cenário, com variações controladas nas condições de execução. Os resultados foram armazenados para posterior consolidação e comparação.
+
+A implementação experimental foi desenvolvida em Python, utilizando a biblioteca scikit-learn para a execução dos algoritmos de agrupamento e o cálculo das métricas de avaliação.
+
+\subsection{Configuraçãoo dos Algoritmos}
+Foram investigados três algoritmos de agrupamento fundamentados em abordagens distintas: K-Means, DBSCAN e BIRCH. A definição das configurações experimentais considerou as características de funcionamento de cada técnica e os resultados obtidos durante a exploração de seus parâmetros.
+
+Para o K-Means, foi adotado o número de dois agrupamentos (k = 2), definido a partir da avaliação de diferentes valores do parâmetro k por meio de métricas de validação interna. As 30 execuções de cada cenário utilizaram diferentes sementes de inicialização, permitindo investigar possíveis variações nas partições produzidas.
+
+Para o BIRCH, foram considerados os parâmetros threshold, branching\_factor e n\_clusters. Após a análise exploratória de diferentes valores de threshold, adotou-se threshold = 1,5, branching\_factor = 50 e n\_clusters = 2. As execuções foram realizadas com diferentes permutações da ordem dos registros, com o propósito de examinar a sensibilidade do algoritmo à sequência de processamento dos dados.
+
+Para o DBSCAN, foram analisadas diferentes combinações dos parâmetros eps e min\_samples, responsáveis, respectivamente, pela definição da vizinhança e pela quantidade mínima de observações necessária para caracterizar regiões densas. Nos experimentos comparativos, foram utilizados eps = 2,5, min\_samples = 3 e distância euclidiana. Assim como no BIRCH, foram realizadas 30 execuções com diferentes ordenações dos registros.
+
+A utilização dessas configurações permitiu comparar os algoritmos em condições experimentais definidas, considerando suas particularidades na formação dos agrupamentos. No caso do DBSCAN, também foi examinada a proporção de registros classificados como ruído, uma vez que o algoritmo não exige a atribuição de todas as observações a um agrupamento.
+
+
+\subsection{Procedimentos de Avaliação}
+A avaliação experimental contemplou quatro dimensões principais: desempenho computacional, qualidade dos agrupamentos, estabilidade das partições e interpretação dos padrões de consumo identificados.
+
+O desempenho computacional foi analisado por meio do tempo de execução dos algoritmos, considerando os valores médios e os desvios-padrão obtidos nas 30 execuções de cada cenário. Essa análise permitiu examinar o comportamento dos tempos de processamento diante do aumento do número de registros.
+
+A qualidade dos agrupamentos foi avaliada por três métricas de validação interna: coeficiente Silhouette, índice Davies-Bouldin e índice Calinski-Harabasz. O coeficiente Silhouette considera a coesão dos registros em seus respectivos agrupamentos e a separação em relação aos demais grupos, sendo preferíveis valores mais elevados. O índice Davies-Bouldin avalia a relação entre dispersão interna e separação dos agrupamentos, de modo que valores menores indicam melhores resultados segundo esse critério. O índice Calinski-Harabasz relaciona a dispersão entre os grupos à dispersão interna, sendo preferíveis valores mais elevados.
+
+Para avaliar a estabilidade dos agrupamentos, foi utilizado o Adjusted Rand Index (ARI), que mede a concordância entre diferentes partições de um mesmo conjunto de registros, com ajuste para concordâncias esperadas ao acaso. Foram realizadas comparações entre os resultados das 30 execuções de cada algoritmo e cenário, totalizando 435 comparações por condição experimental. No K-Means, essa análise considerou diferentes inicializações; no BIRCH e no DBSCAN, foram examinadas variações na ordem de apresentação dos registros.
+
+No caso do DBSCAN, os registros classificados como ruído foram excluídos do cálculo das métricas de validação interna, sendo também calculada a cobertura dos agrupamentos, definida como a proporção de registros atribuídos a algum grupo. Considerando que essa característica poderia comprometer a comparação direta entre os algoritmos, foi realizada uma avaliação complementar sobre um conjunto comum de registros, correspondente às observações agrupadas pelo DBSCAN no cenário C4. Nessa análise, as partições previamente produzidas pelos três algoritmos foram avaliadas sobre os mesmos registros, sem novo ajuste dos modelos.
+
+Adicionalmente, foram examinadas as distribuições dos registros entre os agrupamentos, permitindo identificar possíveis desequilíbrios na formação dos grupos. A interpretação dos padrões de consumo foi realizada a partir das médias horárias da potência ativa global dos registros pertencentes a cada agrupamento, considerando a intensidade da demanda elétrica, os horários de pico e as variações ao longo do dia.
+
+Os resultados das avaliações foram consolidados em tabelas e representações gráficas, possibilitando a comparação dos algoritmos nos diferentes cenários experimentais e a identificação de suas principais características de desempenho, qualidade e estabilidade.
+
+
+\section{Resultados e Discussões}
+\label{sec:resultados}
+
+
+\subsection{Resultados do K-Means}
+Os experimentos realizados com o algoritmo K-Means tiveram como objetivo avaliar seu desempenho computacional, a qualidade dos agrupamentos produzidos e a estabilidade das partições obtidas em diferentes volumes de dados. Inicialmente, foram investigadas diferentes configurações do número de agrupamentos, sendo selecionado o valor (k=2), que apresentou os resultados mais favoráveis nas métricas de validação interna consideradas.
+
+A análise do desempenho computacional demonstrou que o K-Means apresentou tempos médios de execução relativamente próximos nos quatro cenários experimentais. Foram registrados tempos de 0,0544 s, 0,0555 s, 0,0674 s e 0,0539 s para os cenários C1, C2, C3 e C4, respectivamente. Embora o número de registros tenha aumentado de 353 para 1.411, não foi observado crescimento monotônico do tempo de execução. Esse comportamento indica que, nas condições investigadas, o aumento do volume de dados não produziu uma elevação proporcional do tempo de processamento, possivelmente em razão das diferenças no número de iterações necessárias para a convergência e da influência de custos computacionais associados à execução.
+
+Em relação à qualidade dos agrupamentos, os valores médios do coeficiente Silhouette foram de 0,2249, 0,2337, 0,2138 e 0,2046 para os cenários C1, C2, C3 e C4, respectivamente. Os resultados indicam uma separação limitada entre os agrupamentos, embora seja possível identificar estruturas distintas nos perfis diários de consumo. O índice Davies-Bouldin apresentou valores médios entre 1,6337 e 1,7683, enquanto o índice Calinski-Harabasz variou de 120,2276 a 412,6592. O aumento deste último indicador deve ser interpretado considerando as diferenças no número de registros entre os cenários, não constituindo, isoladamente, evidência de melhoria da qualidade dos agrupamentos.
+
+A avaliação da estabilidade demonstrou elevada concordância entre as partições produzidas nas 30 execuções. Os valores médios do Adjusted Rand Index (ARI) foram de 1,0000, 0,9234, 0,9961 e 0,9937 para os cenários C1, C2, C3 e C4, respectivamente. Esses resultados evidenciam que, apesar das diferentes inicializações, o algoritmo produziu agrupamentos predominantemente consistentes. O cenário C2 apresentou a maior variabilidade, indicando maior sensibilidade às condições de inicialização nesse subconjunto.
+
+No cenário C4, considerando a primeira execução, foram identificados dois agrupamentos compostos por 766 e 645 dias, correspondentes a aproximadamente 54,29% e 45,71% dos registros. Essa distribuição relativamente equilibrada permitiu caracterizar dois perfis predominantes de consumo elétrico, diferenciados principalmente pela intensidade da demanda ao longo do dia. Dessa forma, o K-Means apresentou resultados favoráveis quanto à estabilidade e à interpretação dos agrupamentos, embora os indicadores de validação interna apontem limitações na separação dos perfis identificados.
+
+\subsection{Resultados do DBSCAN}
+A aplicação do algoritmo DBSCAN teve como objetivo investigar a formação de agrupamentos baseados em densidade, considerando sua capacidade de identificar regiões com maior concentração de registros e classificar observações que não atendem aos critérios de densidade como ruído.
+
+Nos experimentos comparativos, foram utilizados os parâmetros (eps=2,5) e (min\_samples=3), definidos após a investigação de diferentes configurações. Os resultados demonstraram que o DBSCAN apresentou os menores tempos médios de execução entre os algoritmos avaliados, registrando 0,0063 s, 0,0084 s, 0,0117 s e 0,0118 s nos cenários C1, C2, C3 e C4, respectivamente. Observou-se um crescimento moderado do tempo de processamento à medida que o volume de dados aumentou, mantendo-se, entretanto, valores inferiores aos obtidos com K-Means e BIRCH.
+
+Em relação à estrutura dos agrupamentos, o algoritmo identificou três grupos no cenário C1, cinco no C2, quatro no C3 e três no C4. Entretanto, uma parcela significativa dos registros foi classificada como ruído. A cobertura dos agrupamentos, definida como a proporção de registros atribuídos a algum grupo, foi de 63,17%, 69,26%, 73,35% e 74,13%, respectivamente. Embora tenha ocorrido aumento da cobertura com o crescimento do conjunto de dados, parte das observações permaneceu sem atribuição a agrupamentos.
+
+No cenário C4, dos 1.411 registros analisados, 1.046 foram atribuídos a três agrupamentos, enquanto 365 foram classificados como ruído, correspondendo a aproximadamente 25,87% do conjunto. Entre os registros agrupados, observou-se uma distribuição fortemente concentrada: o agrupamento principal reuniu 1.040 dias, enquanto os outros dois apresentaram apenas três registros cada. Assim, aproximadamente 99,43% dos registros agrupados ficaram concentrados em um único grupo, indicando uma estrutura altamente desequilibrada.
+
+Quanto à qualidade, o coeficiente Silhouette apresentou valores de 0,0537, 0,0666, 0,0636 e 0,1837 nos cenários C1, C2, C3 e C4, respectivamente. O índice Davies-Bouldin variou de 1,3980 a 0,9415, enquanto o Calinski-Harabasz apresentou valores entre 5,2405 e 7,5838. Essas métricas foram calculadas exclusivamente sobre os registros atribuídos aos agrupamentos, desconsiderando aqueles classificados como ruído. Portanto, sua interpretação exige cautela, especialmente em comparações com algoritmos que atribuem todos os registros a algum grupo.
+
+A avaliação da estabilidade apresentou ARI médio igual a 1,0000 em todos os cenários, indicando concordância completa entre as partições obtidas nas diferentes permutações da ordem dos registros. Esse resultado demonstra que, para os parâmetros investigados, a ordenação dos dados não alterou a composição dos agrupamentos. Entretanto, a elevada estabilidade não implica necessariamente maior qualidade ou melhor distribuição dos registros entre os grupos.
+
+Adicionalmente, foi realizada uma análise de sensibilidade dos parâmetros (eps) e (min\_samples), contemplando 72 combinações experimentais. Os resultados evidenciaram uma relação entre cobertura e concentração dos registros: valores menores de (eps) produziram maior fragmentação e menor cobertura, enquanto valores mais elevados aumentaram a proporção de registros agrupados, mas favoreceram a concentração em um agrupamento dominante. Nenhuma das configurações avaliadas atendeu simultaneamente aos critérios exploratórios de cobertura mínima de 50%, formação de pelo menos dois agrupamentos e participação máxima de 90% dos registros agrupados no maior grupo.
+
+Dessa forma, embora o DBSCAN tenha apresentado desempenho computacional favorável e elevada estabilidade, sua aplicação aos perfis diários investigados revelou limitações para a identificação de grupos representativos e equilibrados de consumo elétrico.
+
+\subsection{Resultados do BIRCH}
+Os experimentos com o algoritmo BIRCH buscaram avaliar o comportamento de uma abordagem hierárquica de agrupamento baseada na construção de estruturas de sumarização dos dados. Foram utilizados os parâmetros (threshold=1,5), (branching\_factor=50) e (n\_clusters=2), considerando diferentes ordenações dos registros para investigar a estabilidade das partições.
+
+Em relação ao desempenho computacional, o BIRCH apresentou tempos médios de execução de 0,0200 s, 0,0370 s, 0,0582 s e 0,0694 s nos cenários C1, C2, C3 e C4, respectivamente. Diferentemente do comportamento observado no K-Means, os tempos médios aumentaram progressivamente com o número de registros. Esse resultado evidencia maior tempo de processamento nos cenários mais volumosos, dentro das condições experimentais avaliadas.
+
+Na avaliação da qualidade, o BIRCH apresentou os maiores valores médios do coeficiente Silhouette entre os três algoritmos, considerando os procedimentos originais de avaliação de cada técnica. Os valores registrados foram de 0,3095, 0,2754, 0,2518 e 0,2486 nos cenários C1, C2, C3 e C4, respectivamente. Entretanto, observou-se uma redução gradual desse indicador com o aumento do volume de dados. Os valores médios do índice Davies-Bouldin variaram entre 1,5149 e 1,8508, enquanto o Calinski-Harabasz apresentou valores entre 78,1907 e 273,7494.
+
+Apesar dos resultados relativamente favoráveis do coeficiente Silhouette, a avaliação da estabilidade revelou maior sensibilidade à ordem de apresentação dos registros. Os valores médios do ARI foram de 0,5550, 0,4580, 0,3357 e 0,3546 para os cenários C1, C2, C3 e C4, respectivamente. Esses resultados demonstram que diferentes ordenações dos mesmos registros produziram alterações consideráveis na composição dos agrupamentos, especialmente nos cenários com maior número de observações.
+
+Também foram identificadas diferenças expressivas na distribuição dos registros entre os grupos. No cenário C4, considerando a execução selecionada como representativa pela concordância média com as demais partições, foram identificados dois agrupamentos compostos por 1.190 e 221 dias, correspondentes a aproximadamente 84,34% e 15,66% dos registros. Essa distribuição evidencia uma concentração considerável de observações no agrupamento predominante.
+
+A análise conjunta dos resultados demonstra que os maiores valores de Silhouette obtidos pelo BIRCH não foram acompanhados de elevada estabilidade ou de distribuições equilibradas dos registros. Assim, embora o algoritmo tenha identificado estruturas de agrupamento com resultados favoráveis segundo determinadas métricas de validação interna, sua sensibilidade à ordem dos dados representa uma limitação relevante para a consistência dos perfis identificados.
+
+\subsection{Comparação entre os Algoritmos}
+A comparação dos resultados experimentais evidenciou diferenças importantes entre os algoritmos K-Means, DBSCAN e BIRCH quanto ao desempenho computacional, à qualidade, à estabilidade e à estrutura dos agrupamentos produzidos.
+
+Em relação ao desempenho computacional, o DBSCAN apresentou os menores tempos médios de execução nos quatro cenários investigados. O BIRCH apresentou tempos inferiores aos do K-Means nos cenários C1, C2 e C3, mas registrou tempo médio superior no cenário C4. O K-Means, por sua vez, apresentou tempos relativamente próximos entre os diferentes volumes de dados. Esses resultados indicam comportamentos distintos quanto à variação do tempo de processamento, sem permitir generalizações sobre a complexidade computacional dos algoritmos em outros conjuntos de dados ou ambientes de execução.
+
+Quanto à qualidade dos agrupamentos, o BIRCH apresentou os maiores valores médios do coeficiente Silhouette nas avaliações originais. Entretanto, essa vantagem deve ser analisada conjuntamente com a estabilidade e a distribuição dos registros, uma vez que o algoritmo apresentou elevada variabilidade entre as execuções. O K-Means apresentou valores de Silhouette inferiores aos do BIRCH, mas demonstrou maior consistência das partições. O DBSCAN apresentou valores menores desse indicador na maioria dos cenários, além de produzir agrupamentos altamente concentrados e classificar parte dos registros como ruído.
+
+A avaliação da estabilidade evidenciou elevada concordância entre as execuções do K-Means, com valores médios de ARI superiores a 0,92 em todos os cenários. O BIRCH apresentou valores inferiores, indicando maior sensibilidade às alterações na ordem dos registros. O DBSCAN obteve ARI igual a 1,0000 em todos os cenários, demonstrando concordância completa entre as partições nas condições investigadas. Entretanto, é necessário considerar que as perturbações experimentais não foram idênticas entre os algoritmos, uma vez que o K-Means foi submetido a diferentes inicializações, enquanto BIRCH e DBSCAN foram avaliados por permutações dos registros.
+
+Para reduzir as diferenças decorrentes da avaliação de conjuntos distintos de observações, foi realizada uma comparação complementar no cenário C4, utilizando exclusivamente os 1.046 registros atribuídos a agrupamentos pelo DBSCAN. As partições produzidas pelos três algoritmos foram avaliadas sobre esse mesmo conjunto de registros, sem novo ajuste dos modelos.
+
+Nessa avaliação, o K-Means apresentou o maior coeficiente Silhouette médio, com valor de 0,1968, seguido pelo DBSCAN, com 0,1837, e pelo BIRCH, com 0,1703. O K-Means também apresentou o maior valor médio do índice Calinski-Harabasz, equivalente a 263,6048, enquanto o BIRCH registrou 91,2933 e o DBSCAN 7,5838. Por outro lado, o DBSCAN apresentou o menor índice Davies-Bouldin, com valor de 0,9415, em comparação com 1,8191 do K-Means e 1,8350 do BIRCH.
+
+Embora essa avaliação tenha utilizado os mesmos registros, os algoritmos produziram diferentes quantidades e distribuições de agrupamentos, aspecto que deve ser considerado na interpretação das métricas. Em particular, o DBSCAN manteve três grupos, dos quais dois continham apenas três registros cada, enquanto K-Means e BIRCH produziram duas partições.
+
+A análise da estrutura dos agrupamentos também evidenciou diferenças relevantes. No cenário C4, o K-Means distribuiu os 1.411 registros em dois grupos relativamente equilibrados. O BIRCH apresentou maior concentração de registros em um dos grupos, enquanto o DBSCAN atribuiu aproximadamente 74,13% das observações a agrupamentos, concentrando praticamente todos os registros agrupados em um único grupo.
+
+Considerando conjuntamente os indicadores de desempenho, qualidade, estabilidade e distribuição dos registros, o K-Means apresentou o conjunto de resultados mais favorável para o objetivo de identificar perfis predominantes de consumo elétrico na base analisada. Entretanto, essa conclusão está condicionada às configurações, à representação dos dados e aos cenários experimentais investigados, não constituindo uma indicação de superioridade geral do algoritmo.
+
+\subsection{Análise dos Padrões de Consumo}
+A interpretação dos agrupamentos foi realizada a partir das médias horárias da potência ativa global, permitindo caracterizar diferenças na intensidade da demanda elétrica e identificar períodos de maior consumo ao longo do dia.
+
+No K-Means, a análise do cenário C4 evidenciou dois perfis predominantes. O primeiro, composto por 766 dias, apresentou menor intensidade de demanda durante a maior parte do dia, com elevação no período matutino, especialmente próximo das 7h, e novo aumento no período noturno, com maior valor médio próximo das 21h. O segundo perfil, composto por 645 dias, apresentou demanda superior ao primeiro na maior parte dos horários, com elevação pela manhã e intensificação expressiva entre 18h e 21h, atingindo aproximadamente 2,66 kW às 20h.
+
+Esses resultados indicam que a principal diferença entre os agrupamentos do K-Means está relacionada à intensidade da demanda elétrica, embora ambos apresentem padrões temporais semelhantes, caracterizados por aumentos nos períodos matutino e noturno. A distribuição relativamente equilibrada dos registros entre os dois grupos sugere que esses perfis representam comportamentos recorrentes no conjunto de dias analisados.
+
+No BIRCH, a execução representativa do cenário C4 também permitiu identificar dois perfis com diferentes intensidades de demanda. O agrupamento predominante, composto por 1.190 dias, apresentou elevações no período matutino e noturno, com maior média próxima das 21h. O segundo agrupamento, formado por 221 dias, apresentou níveis de demanda mais elevados durante grande parte do dia, com intensificação no período noturno e valor máximo médio próximo de 2,96 kW às 19h. Entretanto, a menor estabilidade das partições indica que a composição desses perfis pode variar de acordo com a ordem de processamento dos registros.
+
+No DBSCAN, o agrupamento principal reuniu 1.040 dias e apresentou um perfil de demanda com elevações pela manhã e à noite, semelhante ao padrão predominante identificado pelos demais algoritmos. Os outros dois agrupamentos, compostos por apenas três dias cada, apresentaram comportamentos mais específicos. Um deles registrou picos acentuados no período noturno, especialmente entre 20h e 21h, enquanto o outro apresentou maior intensidade de demanda em determinados horários da tarde. Devido ao número reduzido de observações, esses grupos devem ser interpretados como padrões pouco frequentes no conjunto analisado, sem evidência suficiente para caracterizá-los como perfis predominantes.
+
+Os 365 dias classificados como ruído pelo DBSCAN também foram examinados em relação aos agrupamentos produzidos pelos demais algoritmos. Desse conjunto, 313 dias foram atribuídos ao grupo de maior demanda do K-Means, enquanto 52 foram classificados no grupo de menor demanda. No BIRCH, 188 desses dias foram atribuídos ao agrupamento de maior demanda e 177 ao outro agrupamento. Esses resultados indicam uma associação entre a classificação como ruído pelo DBSCAN e os perfis de maior demanda elétrica, especialmente na comparação com o K-Means. Entretanto, a classificação como ruído decorre dos critérios de densidade do algoritmo e não significa, necessariamente, a presença de valores anômalos de consumo.
+
+De maneira geral, a análise dos agrupamentos permitiu identificar variações recorrentes na demanda elétrica ao longo do dia, com destaque para os períodos matutino e noturno. O K-Means apresentou dois perfis predominantes relativamente equilibrados e consistentes entre as execuções, enquanto o BIRCH identificou perfis com diferenças de intensidade, porém com maior sensibilidade à ordem dos registros. O DBSCAN, por sua vez, concentrou a maior parte das observações agrupadas em um perfil predominante e identificou pequenos grupos com comportamentos específicos.
+
+Os resultados demonstram que a escolha do algoritmo influencia não apenas os indicadores de qualidade e desempenho computacional, mas também a forma como os padrões de consumo são representados e interpretados. Dessa forma, a avaliação conjunta das métricas e das características dos agrupamentos constitui um procedimento relevante para selecionar estratégias de mineração de dados adequadas à identificação de perfis de demanda elétrica.
+
+\section{Conclusao}
+\label{sec:conclusao}
+Este trabalho apresentou um estudo experimental comparativo dos algoritmos de agrupamento K-Means, DBSCAN e BIRCH, aplicados à base de dados Individual Household Electric Power Consumption, com o objetivo de avaliar o desempenho computacional, a qualidade e a estabilidade dos agrupamentos, além de identificar padrões diários de consumo de energia elétrica. Para isso, os registros foram organizados em perfis diários representados por 24 atributos correspondentes às médias horárias da potência ativa global e distribuídos em quatro cenários experimentais com diferentes volumes de dados.
+
+Os resultados demonstraram que os algoritmos apresentaram comportamentos distintos nas dimensões investigadas. O DBSCAN obteve os menores tempos médios de execução em todos os cenários e apresentou elevada estabilidade entre as execuções. Entretanto, sua aplicação resultou na classificação de uma parcela significativa dos registros como ruído e na concentração das observações agrupadas em um único grupo predominante. O BIRCH, por sua vez, apresentou os maiores valores médios do coeficiente Silhouette nas avaliações originais, embora tenha demonstrado maior sensibilidade à ordem de processamento dos registros e maior variabilidade na composição dos agrupamentos.
+
+O K-Means apresentou elevada estabilidade entre as diferentes inicializações e produziu agrupamentos relativamente equilibrados, permitindo identificar dois perfis predominantes de consumo elétrico. Esses perfis diferenciaram-se principalmente pela intensidade da demanda ao longo do dia, apresentando elevações de consumo nos períodos matutino e noturno. Dessa forma, considerando conjuntamente a qualidade, a estabilidade e a representatividade dos agrupamentos, o K-Means apresentou os resultados mais adequados aos objetivos desta investigação, nas condições experimentais avaliadas.
+
+A análise comparativa também evidenciou que a utilização isolada de métricas de validação interna não é suficiente para determinar a adequação dos agrupamentos produzidos. Embora determinados algoritmos tenham apresentado resultados superiores em indicadores específicos, esses resultados não foram necessariamente acompanhados de maior estabilidade ou de uma distribuição representativa dos registros entre os grupos. Assim, a avaliação conjunta de diferentes critérios mostrou-se relevante para compreender o comportamento dos algoritmos e interpretar as estruturas identificadas.
+
+Como contribuição, o estudo apresenta uma análise experimental sistemática de três abordagens distintas de agrupamento, considerando diferentes volumes de dados, múltiplas execuções e métricas de desempenho, qualidade e estabilidade. Adicionalmente, a investigação contribui para a caracterização de padrões diários de demanda elétrica, demonstrando como a escolha do algoritmo pode influenciar a identificação e a interpretação dos perfis de consumo.
+
+Entre as limitações da pesquisa, destacam-se a utilização de dados provenientes de uma única residência, a representação dos registros exclusivamente por médias horárias da potência ativa global e a avaliação de um conjunto delimitado de configurações dos algoritmos. Além disso, a análise do desempenho computacional concentrou-se no tempo de execução, não contemplando medições específicas de consumo de memória ou utilização de recursos de processamento.
+
+Como possibilidades de trabalhos futuros, propõe-se ampliar a investigação para conjuntos de dados provenientes de diferentes consumidores, explorar outras representações temporais e atributos relacionados ao consumo elétrico e avaliar técnicas adicionais de agrupamento. Também se sugere investigar estratégias de normalização dos perfis, diferentes medidas de similaridade e procedimentos de ajuste de parâmetros, buscando compreender seus efeitos sobre a qualidade e a estabilidade dos agrupamentos. Por fim, a inclusão de métricas de utilização de recursos computacionais poderá complementar a avaliação experimental e contribuir para uma análise mais abrangente do comportamento dos algoritmos.
+
+
+\bibliographystyle{IEEEtran}
+
+\bibliography{referencias}
+
+\end{document}
